@@ -24,8 +24,13 @@ def run_training():
 
     target_flat = [c for clist in targets for c in clist]
 
-    print(target_flat)
-    # print(targets)
+    lbl_enc = preprocessing.LabelEncoder()
+    lbl_enc.fit(target_flat)
+
+    targets_enc = [lbl_enc.transform(x) for x in targets]
+    targets_enc = np.array(targets_enc) + 1
+
+    print(targets_enc)
 
 
 run_training()

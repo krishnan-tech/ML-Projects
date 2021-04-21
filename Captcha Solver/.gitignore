@@ -1,2 +1,4 @@
 .ipynb_checkpoints/
 __pycache__/
+input/
+captcha_images_v2/
