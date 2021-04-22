@@ -6,6 +6,7 @@
 
 # Project Structure
 
+```
 Project/
 |
 ├───input/
@@ -21,3 +22,4 @@ Project/
     ├───.ipynb_checkpoints/
     │
     └───__pycache__/
+```
