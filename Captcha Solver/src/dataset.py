@@ -22,10 +22,9 @@ class ClassificationDataset:
         return len(self.image_paths)
 
     def __getitem__(self, item):
-        print(item)
         image = Image.open(self.image_paths[item]).convert("RGB")
         targets = self.targets[item]
-        
+
         if self.resize is not None:
             image = image.resize(
                 (self.resize[1], self.resize[0]), resample=Image.BILINEAR
@@ -40,5 +39,3 @@ class ClassificationDataset:
             "images": torch.tensor(image, dtype=torch.float),
             "targets": torch.tensor(targets, dtype=torch.long),
         }
-
-print('imported dataset.py')

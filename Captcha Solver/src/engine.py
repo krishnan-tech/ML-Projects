@@ -7,7 +7,7 @@ def train_fn(model, data_loader, optimizer):
     model.train()
     fin_loss = 0
     tk = tqdm(data_loader, total=len(data_loader))
-    for data in tk0:
+    for data in tk:
         for k, v in data.items():
             data[k] = v.to(config.DEVICE)
 
@@ -20,20 +20,21 @@ def train_fn(model, data_loader, optimizer):
     return fin_loss / len(data_loader)
 
 
-def eval_fn(model, data_loader, optimizer):
-    model.eval_fn()
+def eval_fn(model, data_loader):
+    model.eval()
     fin_loss = 0
     fin_preds = []
-    tk = tqdm(data_loader, total=len(data_loader))
-    for data in tk0:
-        for k, v in data.items():
-            data[k] = v.to(config.DEVICE)
+    with torch.no_grad():
+        tk = tqdm(data_loader, total=len(data_loader))
+        for data in tk:
+            for k, v in data.items():
+                data[k] = v.to(config.DEVICE)
 
-        # optimizer.zero_grad()
-        batch_preds, loss = model(**data)
-        # loss.backward()
-        # optimizer.step()
-        fin_loss += loss.item()
-        fin_preds.append(batch_preds)
+            # optimizer.zero_grad()
+            batch_preds, loss = model(**data)
+            # loss.backward()
+            # optimizer.step()
+            fin_loss += loss.item()
+            fin_preds.append(batch_preds)
 
-    return fin_preds, fin_loss / len(data_loader)
+        return fin_preds, fin_loss / len(data_loader)
