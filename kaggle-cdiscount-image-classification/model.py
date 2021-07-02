@@ -1,4 +1,6 @@
 # CustomDataLoader class
+from torch import nn
+from torch.nn import functional as F
 import torch
 from torch.utils.data import Dataset, DataLoader
 
@@ -10,6 +12,8 @@ import bson
 from skimage.io import imread
 from PIL import Image
 from io import BytesIO
+
+from tqdm import tqdm
 
 import torch
 import torch.nn as nn
@@ -77,6 +81,26 @@ def make_model():
     return model
 
 
+def train_fn(model, data_loader, optimizer):
+    model.train()
+    fin_loss = 0
+    tk = tqdm(data_loader, total=len(data_loader))
+    for data in tk:
+        print(data)
+        # for k, v in data.items():
+        #     data[k] = v.to('cpu')
+
+        optimizer.zero_grad()
+        print(len(data))
+        print(len(data))
+        _, loss = model(**data)
+        loss.backward()
+        optimizer.step()
+        fin_loss += loss.item()
+
+    return fin_loss / len(data_loader)
+
+
 def main():
     make_df()
     df = pd.read_csv('./dataframe.csv')
@@ -85,17 +109,29 @@ def main():
     dataloader = DataLoader(train_loader, batch_size=16, shuffle=True)
 
     model = make_model()
+
+    # model = CaptchaModel(num_chars=5270)
     # print(model)
 
     criterion = nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(model.parameters())
+    optimizer = torch.optim.Adam(model.parameters(), lr=3e-4)
+
+    train_loss = train_fn(model, dataloader, optimizer)
+
+    print(train_loss)
 
     losses = []
     i = 0
     try:
         for i, data in enumerate(dataloader, 1):
+            # label = (data['targets'])
+            # image = (data['images'])
+
+            print(data)
+
             image, label = data
-            # print(image, label)
+
+            print(label)
 
             image, label = Variable(image), Variable(label)
 
@@ -111,12 +147,12 @@ def main():
             optimizer.step()
 
             if i % 25 == 0:
-                print("Current loss: {:.4f}".format(loss_float))
+                print("Current loss: {:.4f}".format(loss))
 
     except KeyboardInterrupt:
-        logging.info("Interrupted prematurely at iteration {}".format(i))
+        print("Interrupted prematurely at iteration {}".format(i))
 
-    logging.info("Saving state dict...")
+    print("Saving state dict...")
     with open(save_model, "wb") as fh:
         torch.save({'state_dict': model.state_dict()}, fh)
 

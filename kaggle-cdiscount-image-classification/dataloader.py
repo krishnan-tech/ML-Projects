@@ -5,7 +5,10 @@ from PIL import Image
 from torch.utils.data import Dataset
 from io import BytesIO
 import bson
-
+import pandas as pd
+import albumentations
+import torch
+import torchvision
 
 train_example_bson = './train_example.bson'
 
@@ -39,12 +42,18 @@ def get_single_item(idx):
 
 
 class CustomDataLoader(Dataset):
-    def __init__(self, df, transform=None, train=True):
+    def __init__(self, df, transform=None, train=True, resize=None):
         self.df = df
         self.transform = transform
         self.train = train
 
         self.ids = self.df.iloc[:, 0].values
+
+        self.resize = resize
+        self.aug = albumentations.Compose([
+            torchvision.transforms.ToTensor(),
+            # albumentations.Normalize()
+        ])
 
     def __len__(self):
         return len(self.ids)
@@ -60,17 +69,28 @@ class CustomDataLoader(Dataset):
 
         # img, label = arr[0], arr[1]
 
-        (prod_id, label, img) = get_single_item(idx)
+        (prod_id, targets, img) = get_single_item(idx)
 
-        img = Image.open(BytesIO(img))
-        # print(label)
+        image = Image.open(BytesIO(img)).convert("RGB")
 
-        # img = np.asarray(img)
-        # img = torch.tensor(img)
+        if self.resize is not None:
+            image = image.resize(
+                (self.resize[1], self.resize[0]), resample=Image.BILINEAR
+            )
 
-        # label = torch.from_numpy(label)
+        image = np.array(image)
+        # augmented = self.aug(image=image)
+        # image = augmented['image']
+        image = np.transpose(image, (2, 0, 1)).astype(np.float32)
+        print({
+            torch.tensor(image, dtype=torch.float),
+            torch.tensor(targets, dtype=torch.long),
+        })
+        return torch.tensor(image, dtype=torch.float), torch.tensor(targets, dtype=torch.long)
 
-        if self.transform:
-            img = self.transform(img)
 
-        return img, label
+# df = pd.read_csv('./dataframe.csv')
+# cds = CustomDataLoader(df)
+
+# print(cds.__len__())
+# print(cds.__getitem__(0))
