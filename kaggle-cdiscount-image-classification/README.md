@@ -1,14 +1,20 @@
+# completed?
+
+status: False
+
 Kaggle competition
 
 Name: Cdiscount’s Image Classification Challenge
 
 URL: https://www.kaggle.com/c/cdiscount-image-classification-challenge/
 
-###### What's New (Progress) ######
+###### What's New (Progress)
+
 1. Added CustomDataLoader
 2. Data Transforms
 
-###### TODO ######
+###### TODO
+
 1. Make Model
 2. Define Optimizers and Loss function
 3. Train the model

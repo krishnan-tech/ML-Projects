@@ -1,4 +1,9 @@
+# completed?
+
+status: True
+
 # Download Dataset
+
 ```
 >>> wget "https://github.com/AakashKumarNain/CaptchaCracker/raw/master/captcha_images_v2.zip"
 >>> unzip captcha_images_v2.zip
