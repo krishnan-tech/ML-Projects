@@ -2,7 +2,7 @@
 
 status: False
 
-Kaggle competition
+# Kaggle competition
 
 Name: Histopathologic Cancer Detection
 
@@ -10,7 +10,7 @@ URL: https://www.kaggle.com/c/histopathologic-cancer-detection/data
 
 Steps to Follow:
 
-1. Reading Data
+1. Reading/Exploring Data: ✅
 2. Create Custom Dataset
 3. split the dataset
 4. transforming the data
